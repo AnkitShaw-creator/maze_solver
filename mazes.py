@@ -31,6 +31,8 @@ class Maze:
         a = self._maze
         graph = defaultdict()
         graph[self.start] = [None, None, None,(1, self.start[1])]
+        graph[self.end] = [None, None, None, None]
+        #print(self.start, self.end)
         
         upnode = [None]*self.width # buffer for connecting to nodes at the top
         upnode[self.start[1]] = self.start
@@ -65,12 +67,7 @@ class Maze:
                                 graph[(i,j)][0] = leftnode # add the last node in leftnode as the neighbour of the node
                                 graph[leftnode][1] = (i,j) # add the new node as the neighbour of the last node in lastnode
                                 leftnode = (i,j)
-                            """if upnode[j] != None:
-                                graph[(i,j)][2] = upnode[j] # add the latest upnode as the neighbour of the node
-                                graph[upnode[j]][3] = (i,j) # add the new node as the neighbour of the latest upnode
-                                upnode[j] = None
-                            if a[i+1][j] >0:
-                                upnode[j] = (i,j)"""
+                            
                             
                             
                     else:
@@ -82,13 +79,6 @@ class Maze:
                             graph[leftnode][1] = (i,j) # add the new node as the neighbour of the last node in lastnode
                             leftnode = None
                             
-                        """if upnode[j] != None:
-                            graph[(i,j)][2] = upnode[j] # add the latest upnode as the neighbour of the node
-                            graph[upnode[j]][3] = (i,j) # add the new node as the neighbour of the latest upnode
-                            if a[i-1][j] == a[i+1][j] != 0:
-                                upnode[j] = (i,j)
-                            else:
-                                upnode[j] = None"""
                             
                 else:
                     if next == True:
@@ -106,17 +96,9 @@ class Maze:
                             # create node only if there is path up or down
                             graph[(i,j)] = [None, None, None, None]
                             count += 1
-                            
-
-                """if (i,j) in graph.keys():
-                    # if the immediate top cell, is in dictionary, then that would suggest any kind of turning or stop.
-                    if a[i-1][j] == 1 :
-                        if (i-1,j) in graph.keys():
-                            graph[(i,j)][2] = (i-1,j)
-                            graph[(i-1,j)][3] = (i,j)"""
                     
                 if (i,j) in graph.keys():
-                    if a[i-1][j] ==1:
+                    if a[i-1][j] == 1:
                         if upnode[j] != None:
                             graph[(i,j)][2] = upnode[j]
                             graph[upnode[j]][3] = (i,j)
@@ -125,12 +107,16 @@ class Maze:
                         upnode[j] = (i,j)
                     else:
                         upnode[j] = None
-                        
-                                                  
-        graph[self.end] = [None, None, (self.end[0]-1, self.end[1]), None]
-        graph[(self.end[0]-1, self.end[1])][3]= self.end 
+        
+        #print(upnode)
+
+        #adding the final node as the neighbours to the node before it
+        graph[self.end][2] = upnode[self.end[1]]
+        graph[upnode[self.end[1]]][3] = self.end
+
+
         count += 1
 
-        print(f'{count} number of nodes created')
+        print(f'Number of nodes created: {count}')
         return graph
 

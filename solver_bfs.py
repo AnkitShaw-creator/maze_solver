@@ -30,7 +30,16 @@ def solve(s, e, maze):
                     visited.append(n)
                     prev.append(current)
 
-    return visited
+    path = []
+    
+    for i in prev:
+        if i not in path:
+            path.append(i)
+    path.append(end)
+        
+
+
+    return path
     
 
 

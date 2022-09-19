@@ -11,12 +11,13 @@ def get_array(im_file):
     im = Image.open(im_file, 'r')
     arr = np.array(im)
     os.system('cls')
-    #for i in arr:
-     #   print(i)
+    """for i in arr:
+        print(i)"""
     
     return arr
 
-def get_maze(file):
+# function to create a maze out of a csv file, if required
+"""def get_maze(file):
     print("opening file")
     f = open(file, 'r')
     reader = csv.reader(f)
@@ -25,19 +26,31 @@ def get_maze(file):
     for line in reader:
         maze.append(f)
 
-    return maze
+    print('\n')
+    return maze"""
 
 def main():
-    arr = get_array("tiny.png")
+    
+    arr = get_array("normal.png")
     #display_maze(arr)
+    initial_time = time.time()
     m = Maze(arr.tolist())
     graph = m.create_graph()
+    #print(m.start, m.end)
     solu = solver_bfs.solve(m.start, m.end, graph)
-    print(solu)
+    time_final = time.time()
+    
+    if solu != None:
+        print(f'\nSolution Found!. Length:{len(solu)}')
+        print(solu)
+    else:
+        print("\nGiven maze cannot be solved with current algorithm")
+        
+    print("\nTime taken:", time_final-initial_time)
 
-
-    for i in graph.keys():
-        print(i, graph[i])
+    # uncomment the below lines to check the graph nodes and their respective neighbours
+    """for i in graph.keys():  
+        print(i, graph[i])"""
 
 if __name__ == "__main__":
     main()
