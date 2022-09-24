@@ -2,13 +2,12 @@ from PIL import Image # for image manipulation
 import time # for getting the system time to check the efficiency of the algorithm
 import os, sys #for controlling the input/output
 import argparse # to parse the cli input
-import csv  #as reader
 import numpy as np # for generating np array for the csv
 from mazes import Maze
-import solver_bfs
+import solver_bfs, solver_dfs
+from factory import SolverFactory
 
-def get_array(im_file):
-    im = Image.open(im_file, 'r')
+def get_array(im):
     arr = np.array(im)
     os.system('cls')
     """for i in arr:
@@ -29,28 +28,79 @@ def get_array(im_file):
     print('\n')
     return maze"""
 
-def main():
+
+def solve(factory, method, maze):
+    graph = maze.create_graph()
+    # uncomment the below lines to check the graph nodes and their respective neighbours
+    """for i in graph.keys():  
+        print(i, graph[i])"""
+    [title, solver] = factory.createsolver("DFS")
+    solu = solver(maze.start, maze.end, graph)
+
+    return [title,solu]
+
+
+
+def draw_path(img, s):
+    im = img.convert('RGB')
+
+    impixel = im.load()
     
-    arr = get_array("normal.png")
+    lenpath = len(s)
+
+    for i in range(0,lenpath-1):
+        a = s[i]
+        b = s[i+1]
+
+        r = int((1/lenpath)*255)
+        px = (r,0,255-r)
+
+
+        if a[0] == b[0]:
+            # path is horizontal
+
+            for x in range(min(a[1],b[1]), max(a[1],b[1])):
+                impixel[x,a[0]] = px
+
+        elif a[1]==b[1]:
+            #path is vertical
+
+            for y in range(min(a[0],b[0]), max(a[1],b[1])):
+                impixel[a[1],y] = px
+
+    
+    im.save("solution_dfs.png")
+
+
+
+
+
+def main():
+    print("Loading image ..........")
+    img = Image.open("normal.png")
+    arr = get_array(img)
     #display_maze(arr)
     initial_time = time.time()
-    m = Maze(arr.tolist())
-    graph = m.create_graph()
-    #print(m.start, m.end)
-    solu = solver_bfs.solve(m.start, m.end, graph)
+    maze= Maze(arr.tolist())
+  
+    sf = SolverFactory()
+    solu = solve(sf, "DFS", maze)
     time_final = time.time()
     
+    
+    
     if solu != None:
-        print(f'\nSolution Found!. Length:{len(solu)}')
-        print(solu)
+        print(f'\nSolution Found!. Length:{len(solu[1])}')
+        print(f'Method: {solu[0]}')
+        print(f'Path found: {solu[1]}')
+        print("Drawing path ..........")
+        draw_path(img,solu[1])
     else:
         print("\nGiven maze cannot be solved with current algorithm")
         
     print("\nTime taken:", time_final-initial_time)
 
-    # uncomment the below lines to check the graph nodes and their respective neighbours
-    """for i in graph.keys():  
-        print(i, graph[i])"""
+    
 
 if __name__ == "__main__":
     main()

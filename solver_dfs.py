@@ -1,49 +1,42 @@
-# implementation of Breadth First Search algorithm for solving the maze
+#implementation of Depth-Frist Search algorithm for solving the maze
 
 from collections import deque
 
 
-def solve(s, e, maze):
+def solve(s, e,maze):
     start = s
     end = e
 
-    queue = deque([start])
-    visited = [start]
-    prev = [start]
-
+    stack = deque([start])
+    visited = []
+    prev = []
     count = 0
 
-    while queue:
+    while stack:
         count += 1
-
-        current  = queue.pop()
+        current =  stack.pop()
 
         if current == end:
             break
+        
+        visited.append(current)
 
         for n in maze[current]:
             if n != None:
                 if n not in visited:
-                    queue.append(n)
-                    visited.append(n)
+                    stack.append(n)
                     prev.append(current)
+
 
     path = []
     
     for i in prev:
         if i not in path:
             path.append(i)
+
     path.append(end)
-        
 
 
     return path
-    
 
 
-
-
-    
-
-
-    
