@@ -40,19 +40,18 @@ def solve(factory, method, maze):
     return [title,solu]
 
 
-
-def draw_path(img, s):
+def draw_path(img, s, file_name):
     im = img.convert('RGB')
-
+    path = s[1]
     impixel = im.load()
-    
-    lenpath = len(s)
+    img_file_name=f'solution_{s[0]}_{file_name[:-5]}.png'
+    lenpath = len(path)
 
     for i in range(0,lenpath-1):
-        a = s[i]
-        b = s[i+1]
+        a = path[i]
+        b = path[i+1]
 
-        r = int((1/lenpath)*255)
+        r = int((i/lenpath)*255)
         px = (r,0,255-r)
 
 
@@ -65,19 +64,17 @@ def draw_path(img, s):
         elif a[1]==b[1]:
             #path is vertical
 
-            for y in range(min(a[0],b[0]), max(a[1],b[1])):
+            for y in range(min(a[0],b[0]), max(a[0],b[0])+1):
                 impixel[a[1],y] = px
 
     
-    im.save("solution_dfs.png")
-
-
-
+    im.save(img_file_name)
 
 
 def main():
-    print("Loading image ..........")
-    img = Image.open("normal.png")
+    str = input("Enter the image file name: ")
+    print("\nLoading image ..........")
+    img = Image.open(str)
     arr = get_array(img)
     #display_maze(arr)
     initial_time = time.time()
@@ -92,9 +89,9 @@ def main():
     if solu != None:
         print(f'\nSolution Found!. Length:{len(solu[1])}')
         print(f'Method: {solu[0]}')
-        print(f'Path found: {solu[1]}')
+        print(f'Path found: {len(solu[1])}')
         print("Drawing path ..........")
-        draw_path(img,solu[1])
+        draw_path(img,solu,str)
     else:
         print("\nGiven maze cannot be solved with current algorithm")
         
